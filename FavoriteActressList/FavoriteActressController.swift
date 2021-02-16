@@ -8,9 +8,25 @@
 import UIKit
 
 class FavoriteActressController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-    let actressList = ["김고은","신세경","박보영","박은빈","김유정","박하선"]
-    let explanationList = ["김고은입니다","신세경입니다","박보영입니다","박은빈입니다","김유정입니다","박하선입니다"]
     
+//    MVVM
+//
+//    Model
+//    - ActressInfo
+//    ActressInfo 제작
+//
+//    View
+//    - ListCell
+//    ListCell 필요한 정보를 ViewModel에서 받아옴
+//    ListCell은 ViewModel에서 받아온 정보로 뷰 업데이트
+//
+//    ViewModel
+//    - ActressViewModel
+//    ActressViewModel 제작, 뷰레이어에서 필요한 메서드 만들기
+//    Model 가지고 있기, ActressInfo 들
+    
+    let viewModel = ActressViewModel()
+        
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // detailViewController에 데이터 줌
         if segue.identifier == "showDetail" {
@@ -19,8 +35,9 @@ class FavoriteActressController: UIViewController, UITableViewDataSource, UITabl
 //            if let index = sender as? Int{
 //            }
             guard let index = sender as? Int else { return }
-            vc?.name = actressList[index]
-            vc?.explain = explanationList[index]
+            
+            let actressInfo = viewModel.actressInfo(at: index)
+            vc?.viewModel.update(model: actressInfo)
         
         }
     }
@@ -31,25 +48,23 @@ class FavoriteActressController: UIViewController, UITableViewDataSource, UITabl
     
     // UItableviewDataSource
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return actressList.count
+
+        return viewModel.numberOfActressInfoList
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "tablecell", for: indexPath) as? ListCell else {
             return UITableViewCell()
         }
-        let img = UIImage(named: "\(actressList[indexPath.row]).jpg")
-        cell.imgView.image = img
-        cell.nameLabel.text = actressList[indexPath.row]
-        cell.explanationLabel.text = explanationList[indexPath.row]
-//        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        let actressInfo = viewModel.actressInfo(at: indexPath.row)
+        cell.update(info: actressInfo)
         
         return cell
     }
     
     //UItableViewDelegate Click event
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("click\(actressList[indexPath.row])")
+        print("click\(indexPath.row)")
         //modal segue설정하는 부분
         performSegue(withIdentifier: "showDetail", sender: indexPath.row)
     }
@@ -60,4 +75,36 @@ class ListCell: UITableViewCell {
     @IBOutlet weak var imgView: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var explanationLabel: UILabel!
+    
+    func update(info: ActressInfo){
+        imgView.image = info.image
+        nameLabel.text = info.name
+        explanationLabel.text = info.explain
+    }
+}
+
+class ActressViewModel {
+    let actressInfoList: [ActressInfo] = [
+        ActressInfo(name: "김고은", explain: "91년생 입니다!"),
+        ActressInfo(name: "박보영", explain: "90년생 입니다!"),
+        ActressInfo(name: "박은빈", explain: "92년생 입니다!"),
+        ActressInfo(name: "신세경", explain: "90년생 입니다!"),
+        ActressInfo(name: "김유정", explain: "99년생 입니다!"),
+        ActressInfo(name: "박하선", explain: "87년생 입니다!")
+    ]
+    
+    var sortedList: [ActressInfo] {
+        let sortedList = actressInfoList.sorted{ prev, next in
+            return prev.explain > next.explain
+        }
+        return sortedList
+    }
+    
+    var numberOfActressInfoList: Int {
+        return actressInfoList.count
+    }
+    
+    func actressInfo(at index: Int) -> ActressInfo {
+        return sortedList[index]
+    }
 }

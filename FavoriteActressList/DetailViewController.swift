@@ -8,6 +8,22 @@
 import UIKit
 
 class DetailViewController: UIViewController {
+    
+    
+//    MVVM
+//
+//    Model
+//    - ActressInfo
+//    ActressInfo 제작
+//
+//    View
+//    - imageView, nameLabel, explainLabel
+//    view 들은 viewModel을 통해서 구성하ㄱ
+//
+//    ViewModel
+//    - DetailViewModel
+//    뷰레이어에서 필요한 메서드 만들기
+//    Model 가지고 있기, ActressInfo 들
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,17 +38,23 @@ class DetailViewController: UIViewController {
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var explainLabel: UILabel!
     
-    var name: String?
-    var explain: String?
+    
+    let viewModel = DetailViewModel()
     
     func updateUI() {
-        if let name = self.name, let explain = self.explain{
-            let image = UIImage(named: "\(name).jpg")
-            imageView.image = image
-            nameLabel.text = name
-            explainLabel.text = "\(explain)"
-
+        
+        if let actressInfo = self.viewModel.actressInfo {
+            imageView.image = actressInfo.image
+            nameLabel.text = actressInfo.name
+            explainLabel.text = actressInfo.explain
         }
     }
 
+}
+class DetailViewModel {
+    var actressInfo: ActressInfo?
+    
+    func update(model: ActressInfo?){
+        actressInfo = model
+    }
 }
