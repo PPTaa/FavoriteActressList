@@ -149,9 +149,11 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="explainLabel" destination="xFV-sC-YCb" id="dDL-cw-A2Y"/>
+                        <outlet property="explainLabel" destination="xFV-sC-YCb" id="KKd-RE-KSl"/>
+                        <outlet property="explainLabelY" destination="FpM-oH-M9G" id="AW3-b2-AOI"/>
                         <outlet property="imageView" destination="YIT-at-7LA" id="gPf-yz-y7Z"/>
                         <outlet property="nameLabel" destination="gB2-Hl-6xM" id="QLD-dH-eyl"/>
+                        <outlet property="nameLabelCenterX" destination="uwE-dA-FGF" id="cLZ-GK-J7s"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JZH-eA-Akh" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
