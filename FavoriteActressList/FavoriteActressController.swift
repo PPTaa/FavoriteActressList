@@ -7,7 +7,10 @@
 
 import UIKit
 
-class FavoriteActressController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class FavoriteActressController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+    
+    
+    
     
 //    MVVM
 //
@@ -46,32 +49,40 @@ class FavoriteActressController: UIViewController, UITableViewDataSource, UITabl
         super.viewDidLoad()
     }
     
-    // UItableviewDataSource
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-
+//    UICollectionViewDataSource,
+//    몇개 표출
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return viewModel.numberOfActressInfoList
     }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "tablecell", for: indexPath) as? ListCell else {
-            return UITableViewCell()
-        }
-        let actressInfo = viewModel.actressInfo(at: indexPath.row)
+//    셀은 어떻게 표현?
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GridCell", for: indexPath) as? GridCell else { return UICollectionViewCell() }
+        let actressInfo = viewModel.actressInfo(at: indexPath.item)
         cell.update(info: actressInfo)
-        
         return cell
     }
     
-    //UItableViewDelegate Click event
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("click\(indexPath.row)")
-        //modal segue설정하는 부분
-        performSegue(withIdentifier: "showDetail", sender: indexPath.row)
+//    UICollectionViewDelegate,
+//    셀이 클릭되었을때
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print("click : \(indexPath.item)")
+        performSegue(withIdentifier: "showDetail", sender: indexPath.item)
+    }
+    
+//    UICollectionViewDelegateFlowLayout
+//    셀사이즈를 계산 (목표: 다양한 디바이스에서 일관적인 디자인을 보여주기 위해)
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        let itemSpacing: CGFloat = 10
+        let textAreaHeight: CGFloat = 65
+        
+        let width:CGFloat = (collectionView.bounds.width - itemSpacing)/2
+        let height:CGFloat = width * 10 / 7 + textAreaHeight
+        return CGSize(width: width, height: height)
     }
 }
 
-
-class ListCell: UITableViewCell {
+class GridCell: UICollectionViewCell {
     @IBOutlet weak var imgView: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var explanationLabel: UILabel!
